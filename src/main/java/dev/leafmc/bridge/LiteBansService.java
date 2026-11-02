@@ -43,8 +43,11 @@ public final class LiteBansService {
       return Result.fail("LiteBans unavailable", "LiteBans is unavailable.");
     if (!Validation.player(player))
       throw new IllegalArgumentException("Invalid player name or UUID.");
-    boolean ok = Bukkit.dispatchCommand(Bukkit.getConsoleSender(), action + " " + player);
-    return ok ? Result.ok("LiteBans command dispatched", action + " for " + player)
-        : Result.fail("LiteBans command failed", action + " was rejected by LiteBans.");
+    CapturingCommandSender.Capture capture = CapturingCommandSender.create(Bukkit.getConsoleSender());
+    boolean ok = Bukkit.dispatchCommand(capture.sender(), action + " " + player);
+    if (!ok) return Result.fail("LiteBans command failed", action + " was rejected by LiteBans.");
+    String output = capture.handler().output();
+    return Result.ok("LiteBans: " + action,
+        output.isBlank() ? "LiteBans returned no readable output for " + player + "." : output);
   }
 }
