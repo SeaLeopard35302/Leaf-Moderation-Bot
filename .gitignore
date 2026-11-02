@@ -1,0 +1,30 @@
+# Maven build output
+target/
+
+# Local runtime configuration and secrets
+.env
+.env.*
+!.env.example
+secrets.yml
+secrets.properties
+plugins/LeafDiscordBridge/config.yml
+runtime-config.yml
+
+# Server/runtime files accidentally copied into the repository
+plugins/
+logs/
+world/
+world_nether/
+world_the_end/
+*.log
+*.jar
+
+# IDE and OS metadata
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+.DS_Store
+Thumbs.db

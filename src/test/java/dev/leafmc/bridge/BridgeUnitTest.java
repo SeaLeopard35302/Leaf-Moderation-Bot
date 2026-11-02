@@ -1,0 +1,10 @@
+package dev.leafmc.bridge;
+import org.junit.jupiter.api.Test; import java.time.Duration; import java.util.*; import static org.junit.jupiter.api.Assertions.*;
+class BridgeUnitTest {
+ @Test void parsesOnlySafeDurations(){assertEquals(Duration.ofDays(7),Validation.duration("7d").orElseThrow());assertTrue(Validation.duration("7 days").isEmpty());assertTrue(Validation.duration("0m").isEmpty());assertTrue(Validation.duration("999999w").isEmpty());}
+ @Test void validatesPlayerAndItemTokens(){assertTrue(Validation.player("Steve_01"), "name");assertTrue(Validation.player("123e4567-e89b-12d3-a456-426614174000"), "UUID");assertFalse(Validation.player("Steve;op"));assertTrue(Validation.item("minecraft:diamond"), "item");assertFalse(Validation.item("diamond give @a"));}
+ @Test void rejectsInjectionAndOversizeReasons(){assertThrows(IllegalArgumentException.class,()->Validation.reason("one\ntwo",20,true));assertThrows(IllegalArgumentException.class,()->Validation.reason("",20,true));assertThrows(IllegalArgumentException.class,()->Validation.reason("012345",5,false));}
+ @Test void authorizationIsDefaultDeny(){Config.Access a=new Config.Access(Set.of("1"),Set.of("2"));Config c=new Config("x","",true,10,10,true,true,true,true,true,false,true,true,true,"",Map.of("moderation",a));AuthorizationService s=new AuthorizationService(c);assertTrue(s.allowed("moderation","1",Set.of()));assertTrue(s.allowed("moderation","9",Set.of("2")));assertFalse(s.allowed("moderation","9",Set.of("3")));assertFalse(s.allowed("unknown","1",Set.of()));}
+ @Test void nativeCommandFormsAreNamespaced(){MinecraftCommandService s=new MinecraftCommandService(64);assertEquals("minecraft:give Steve minecraft:diamond 32",s.giveCommand("Steve","minecraft:diamond",32));assertEquals("minecraft:clear Steve",s.clearCommand("Steve",null));assertEquals("minecraft:clear Steve minecraft:stone",s.clearCommand("Steve","minecraft:stone"));}
+ @Test void auditRecordsSanitizeNewlines(){AuditRecord r=AuditRecord.of("1","mod","ban","x\ny","ok");assertEquals("x y",r.arguments());assertNotNull(r.timestamp());}
+}

@@ -1,0 +1,29 @@
+# Copy config.yml.example before adding a token. This file is never overwritten after first start.
+discord:
+  token: "SET_ME"
+  application-id: ""
+  guild-id: "" # Use a guild ID for immediate command updates; leave blank for global commands.
+security:
+  default-deny: true
+  allowed-user-ids: []
+  allowed-role-ids: []
+permissions:
+  moderation: { allowed-user-ids: [], allowed-role-ids: [] }
+  investigation: { allowed-user-ids: [], allowed-role-ids: [] }
+  team-admin: { allowed-user-ids: [], allowed-role-ids: [] }
+  inventory-admin: { allowed-user-ids: [], allowed-role-ids: [] }
+  command-admin: { allowed-user-ids: [], allowed-role-ids: [] }
+integrations:
+  litebans: { enabled: true, allow-ipban: false, reason-required: true }
+  betterteams: { enabled: true }
+commands:
+  moderation: true
+  teams: true
+  inventory: true
+  server-status: true
+  unrestricted-console: false # Permanently unsupported; never enables remote console.
+  additional-native-allowlist: []
+responses: { ephemeral-by-default: true }
+audit: { enabled: true, discord-channel-id: "" }
+limits:
+  { reason-length: 256, command-timeout-seconds: 10, max-give-amount: 2304 }

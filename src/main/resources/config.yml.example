@@ -1,0 +1,15 @@
+# See config.yml for every option. Set a real bot token only in plugins/LeafDiscordBridge/config.yml.
+discord:
+  token: "SET_ME"
+  application-id: "YOUR_APPLICATION_ID"
+  guild-id: "YOUR_DEVELOPMENT_GUILD_ID"
+security:
+  default-deny: true
+  allowed-user-ids: ["YOUR_DISCORD_USER_ID"]
+  allowed-role-ids: []
+permissions:
+  moderation: { allowed-user-ids: [], allowed-role-ids: [] }
+  investigation: { allowed-user-ids: [], allowed-role-ids: [] }
+  team-admin: { allowed-user-ids: [], allowed-role-ids: [] }
+  inventory-admin: { allowed-user-ids: [], allowed-role-ids: [] }
+  command-admin: { allowed-user-ids: [], allowed-role-ids: [] }

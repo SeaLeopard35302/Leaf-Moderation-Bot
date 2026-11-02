@@ -1,0 +1,7 @@
+name: LeafDiscordBridge
+version: 1.0.0
+main: dev.leafmc.bridge.LeafDiscordBridgePlugin
+api-version: "1.21"
+folia-supported: true
+softdepend: [LiteBans, BetterTeams, Essentials]
+description: Secure Discord moderation and administration bridge.
