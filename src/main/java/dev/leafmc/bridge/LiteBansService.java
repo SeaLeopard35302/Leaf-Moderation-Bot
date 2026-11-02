@@ -1,7 +1,17 @@
 package dev.leafmc.bridge;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import litebans.api.Database;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * LiteBans 2.18.8 has no stable public punishment API in the supplied artifact.
@@ -49,5 +59,40 @@ public final class LiteBansService {
     String output = capture.handler().output();
     return Result.ok("LiteBans: " + action,
         output.isBlank() ? "LiteBans returned no readable output for " + player + "." : output);
+  }
+
+  /** Returns linked accounts through LiteBans' public Database API, without exposing the IP. */
+  public Result alts(String player) {
+    if (!available) return Result.fail("LiteBans unavailable", "LiteBans is unavailable.");
+    if (!Validation.player(player)) throw new IllegalArgumentException("Invalid player name or UUID.");
+    Database database = Database.get();
+    UUID target = player.indexOf('-') >= 0 ? UUID.fromString(player) : database.getPlayerUUID(player);
+    if (target == null) return Result.fail("Player not found", "LiteBans has no UUID record for " + player + ".");
+    String ip = latestIp(target);
+    if (ip == null || ip.isBlank()) return Result.ok("LiteBans: alts", "No recorded IP history is available for " + player + ".");
+    Collection users = database.getUsersByIP(ip);
+    List<String> names = new ArrayList<>();
+    for (Object user : users) {
+      try {
+        UUID uuid = user instanceof UUID value ? value : UUID.fromString(String.valueOf(user));
+        String name = database.getPlayerName(uuid);
+        if (name != null && !name.isBlank()) names.add(name);
+      } catch (IllegalArgumentException ignored) { }
+    }
+    names.sort(String.CASE_INSENSITIVE_ORDER);
+    if (names.isEmpty()) return Result.ok("LiteBans: alts", "No linked accounts found for " + player + ".");
+    String detail = "Linked accounts for " + player + " (" + names.size() + "):\n" + String.join(", ", names);
+    return Result.ok("LiteBans: alts", detail.length() <= 3_500 ? detail : detail.substring(0, 3_499) + "…");
+  }
+
+  private String latestIp(UUID uuid) {
+    Player online = Bukkit.getPlayer(uuid);
+    if (online != null && online.getAddress() != null && online.getAddress().getAddress() != null)
+      return online.getAddress().getAddress().getHostAddress();
+    try (PreparedStatement statement = Database.get().prepareStatement(
+        "SELECT ip FROM litebans_history WHERE uuid = ? ORDER BY date DESC LIMIT 1")) {
+      statement.setString(1, uuid.toString());
+      try (ResultSet result = statement.executeQuery()) { return result.next() ? result.getString("ip") : null; }
+    } catch (SQLException ignored) { return null; }
   }
 }

@@ -176,8 +176,9 @@ public final class DiscordBotService extends ListenerAdapter {
             return teams.add(opt(e, "name"), p);
         if (n.equals("team-setowner"))
             return teams.setOwner(opt(e, "name"), opt(e, "owner"));
-        if (List.of("history", "checkban", "checkmute", "staffhistory", "alts", "dupeip", "unban", "unmute", "unwarn")
-                .contains(n))
+        if (n.equals("alts") || n.equals("dupeip"))
+            return lite.alts(p);
+        if (List.of("history", "checkban", "checkmute", "staffhistory", "unban", "unmute", "unwarn").contains(n))
             return lite.simple(n, p);
         return lite.punish(n, p, opt(e, "duration"), opt(e, "reason"));
     }

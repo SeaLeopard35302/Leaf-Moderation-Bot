@@ -8,6 +8,7 @@
     <!-- Exact API build resolved from Paper's repository for Leaf 26.2 / Minecraft 1.21.11. -->
     <dependency><groupId>io.papermc.paper</groupId><artifactId>paper-api</artifactId><version>1.21.11-R0.1-20260511.115010-91</version><scope>provided</scope></dependency>
     <dependency><groupId>local</groupId><artifactId>betterteams</artifactId><version>5.1.7</version><scope>system</scope><systemPath>/home/sealeopard/Apps/Servers/newfort-2026/plugins/BetterTeams-5.1.7.jar</systemPath></dependency>
+    <dependency><groupId>local</groupId><artifactId>litebans</artifactId><version>2.19.0</version><scope>system</scope><systemPath>/home/sealeopard/Apps/Servers/newfort-2026/plugins/LiteBans.jar</systemPath></dependency>
     <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><version>5.11.4</version><scope>test</scope></dependency>
   </dependencies>
   <build><plugins>
